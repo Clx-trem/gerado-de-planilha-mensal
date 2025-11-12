@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -21,7 +22,7 @@
       margin-top: 10px;
       font-weight: bold;
     }
-    input, button {
+    input, select, button {
       padding: 8px;
       border-radius: 5px;
       border: 1px solid #ccc;
@@ -64,13 +65,17 @@
     th {
       background: #f1f5f9;
     }
-    .colunaInput {
-      display: flex;
-      gap: 5px;
+    #colunasContainer input {
+      display: block;
+      width: 100%;
       margin-top: 5px;
     }
-    .colunaInput input {
-      flex: 1;
+    .modelos {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
   </style>
 
@@ -91,14 +96,22 @@
 
   <label>Colunas da planilha:</label>
   <div id="colunasContainer">
-    <div class="colunaInput">
-      <input type="text" value="Data">
-      <input type="text" value="Dia da Semana">
-      <input type="text" value="Atividade">
-      <input type="text" value="Observações">
-    </div>
+    <input type="text" value="Data">
+    <input type="text" value="Dia da Semana">
+    <input type="text" value="Atividade">
+    <input type="text" value="Observações">
   </div>
+
   <button id="addColunaBtn" style="background:#17a2b8;">+ Adicionar Coluna</button>
+
+  <div class="modelos">
+    <select id="modeloSelect">
+      <option value="">-- Escolher modelo salvo --</option>
+    </select>
+    <button id="salvarModeloBtn" style="background:#28a745;">Salvar como Modelo</button>
+    <button id="carregarModeloBtn" style="background:#ffc107; color:#000;">Carregar Modelo</button>
+    <button id="excluirModeloBtn" style="background:#dc3545;">Excluir Modelo</button>
+  </div>
 
   <div>
     <button id="gerarBtn">Gerar Arquivo XLSX</button>
@@ -212,7 +225,61 @@
       preview.innerHTML = html;
     }
 
-    // Botões
+    // --- Sistema de Modelos ---
+    const modeloSelect = document.getElementById("modeloSelect");
+
+    function atualizarListaModelos() {
+      modeloSelect.innerHTML = `<option value="">-- Escolher modelo salvo --</option>`;
+      const modelos = JSON.parse(localStorage.getItem("modelosColunas") || "{}");
+      for (const nome in modelos) {
+        const opt = document.createElement("option");
+        opt.value = nome;
+        opt.textContent = nome;
+        modeloSelect.appendChild(opt);
+      }
+    }
+
+    atualizarListaModelos();
+
+    document.getElementById("salvarModeloBtn").addEventListener("click", () => {
+      const nome = prompt("Digite o nome do modelo:");
+      if (!nome) return;
+      const colunas = pegarColunas();
+      const modelos = JSON.parse(localStorage.getItem("modelosColunas") || "{}");
+      modelos[nome] = colunas;
+      localStorage.setItem("modelosColunas", JSON.stringify(modelos));
+      atualizarListaModelos();
+      alert(`Modelo "${nome}" salvo com sucesso!`);
+    });
+
+    document.getElementById("carregarModeloBtn").addEventListener("click", () => {
+      const nome = modeloSelect.value;
+      if (!nome) return alert("Escolha um modelo para carregar!");
+      const modelos = JSON.parse(localStorage.getItem("modelosColunas") || "{}");
+      const colunas = modelos[nome];
+      const container = document.getElementById("colunasContainer");
+      container.innerHTML = "";
+      colunas.forEach(c => {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = c;
+        container.appendChild(input);
+      });
+      alert(`Modelo "${nome}" carregado!`);
+    });
+
+    document.getElementById("excluirModeloBtn").addEventListener("click", () => {
+      const nome = modeloSelect.value;
+      if (!nome) return alert("Escolha um modelo para excluir!");
+      if (!confirm(`Excluir modelo "${nome}"?`)) return;
+      const modelos = JSON.parse(localStorage.getItem("modelosColunas") || "{}");
+      delete modelos[nome];
+      localStorage.setItem("modelosColunas", JSON.stringify(modelos));
+      atualizarListaModelos();
+      alert("Modelo excluído!");
+    });
+
+    // Botões principais
     document.getElementById("gerarBtn").addEventListener("click", () => {
       const ano = parseInt(document.getElementById("ano").value);
       const meses = mesesSelecionados();
