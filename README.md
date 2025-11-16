@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -108,7 +107,7 @@
   <div id="clxLoginOverlay">
     <div id="clxLoginCard">
       <h2>CLX — Acesso</h2>
-      <input id="clxUserInput" placeholder="Usuário (ex: CLX)">
+      <input id="clxUserInput" placeholder="Usuário (ex: admin)">
       <input id="clxPassInput" type="password" placeholder="Senha">
       <label style="display:flex;gap:8px;align-items:center;margin-top:8px">
         <input id="clxRemember" type="checkbox"> Lembrar login
