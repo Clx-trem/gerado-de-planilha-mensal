@@ -106,7 +106,7 @@
   <!-- LOGIN OVERLAY -->
   <div id="clxLoginOverlay">
     <div id="clxLoginCard">
-      <h2>CLX — Acesso</h2>
+      <h2>Acesso</h2>
       <input id="clxUserInput" placeholder="Usuário (ex: admin)">
       <input id="clxPassInput" type="password" placeholder="Senha">
       <label style="display:flex;gap:8px;align-items:center;margin-top:8px">
